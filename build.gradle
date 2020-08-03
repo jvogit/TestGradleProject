@@ -9,11 +9,13 @@ plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
     id 'maven-publish'
-    id 'signing'
     id 'com.jfrog.bintray' version '1.8.5'
+    id 'net.nemerosa.versioning' version '2.8.2'
 }
 
-version = currentVersion
+group = 'com.gmail.justinxvopro'
+archivesBaseName = 'MyFirstGradleProject'
+version = versioning.info.display
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -39,33 +41,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-artifacts {
-    archives sourcesJar
-    archives javadocJar
-}
-
-def pomConfig = {
-    licenses {
-        license {
-            name "MIT License"
-            distribution "repo"
-        }
-    }
-    developers {
-        developer {
-            id "jvogit"
-            name "Justin Vo"
-        }
-    }
-
-    scm {
-        url "https://github.com/jvogit/MyFirstGradleProject.git"
-    }
-}
-
 publishing {
     publications {
-        mavenJava(MavenPublication) {
+        mavenPublish(MavenPublication) {
             from components.java
             artifact sourcesJar {
                 classifier "sources"
@@ -73,36 +51,30 @@ publishing {
             artifact javadocJar {
                 classifier "javadoc"
             }
-            groupId 'com.gmail.justinxvopro'
-            artifactId 'MyFirstGradleProject'
-            version currentVersion
-            pom.withXml {
-                def root = asNode()
-                root.appendNode('description', 'MyFirstGradleProject')
-                root.appendNode('name', 'My first gradle lib')
-                root.appendNode('url', 'https://github.com/jvogit/MyFirstGradleProject.git')
-                root.children().last() + pomConfig
-            }
+            groupId group
+            artifactId archivesBaseName
+            version version
         }
     }
-}
-
-signing {
-    sign publishing.publications.mavenJava
 }
 
 bintray {
     user = bintray_user
     key = bintray_key
-    publications = ['mavenJava']
+    publications = ['mavenPublish']
     pkg {
         repo = 'testRepo'
         name = 'MyFirstGradleProject'
         licenses = ['MIT']
         vcsUrl = 'https://github.com/jvogit/MyFirstGradleProject.git'
+        publish = true
         version {
-            desc = 'Test deployment'
+            desc = 'First release'
             released = new Date()
+            gpg {
+                sign = true
+                passphrase = gpg_passphrase
+            }
         }
     }
 }
