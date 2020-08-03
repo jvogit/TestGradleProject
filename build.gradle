@@ -59,12 +59,12 @@ publishing {
 }
 
 bintray {
-    user = bintray_user
-    key = bintray_key
+    user = project.findProperty('bintray_user') ?: System.getEnv('BINTRAY_USER')
+    key = project.findProperty('bintray_key') ?: System.getEnv('BINTRAY_KEY')
     publications = ['mavenPublish']
     pkg {
         repo = 'testRepo'
-        name = 'MyFirstGradleProject'
+        name = archivesBaseName
         licenses = ['MIT']
         vcsUrl = 'https://github.com/jvogit/MyFirstGradleProject.git'
         publish = true
@@ -73,7 +73,7 @@ bintray {
             released = new Date()
             gpg {
                 sign = true
-                passphrase = gpg_passphrase
+                passphrase = project.findProperty('gpg_passphrase') ?: System.getEnv('GPG_PASSPHRASE')
             }
         }
     }
