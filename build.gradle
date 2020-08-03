@@ -59,8 +59,8 @@ publishing {
 }
 
 bintray {
-    user = project.findProperty('bintray_user') ?: System.getEnv('BINTRAY_USER')
-    key = project.findProperty('bintray_key') ?: System.getEnv('BINTRAY_KEY')
+    user = project.findProperty('bintray_user') ?: System.getenv('BINTRAY_USER')
+    key = project.findProperty('bintray_key') ?: System.getenv('BINTRAY_KEY')
     publications = ['mavenPublish']
     pkg {
         repo = 'testRepo'
@@ -73,7 +73,7 @@ bintray {
             released = new Date()
             gpg {
                 sign = true
-                passphrase = project.findProperty('gpg_passphrase') ?: System.getEnv('GPG_PASSPHRASE')
+                passphrase = project.findProperty('gpg_passphrase') ?: System.getenv('GPG_PASSPHRASE')
             }
         }
     }
