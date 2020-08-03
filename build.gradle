@@ -5,11 +5,15 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * User Manual available at https://docs.gradle.org/6.0/userguide/java_library_plugin.html
  */
-
 plugins {
     // Apply the java-library plugin to add support for Java Library
     id 'java-library'
+    id 'maven-publish'
+    id 'signing'
+    id 'com.jfrog.bintray' version '1.8.5'
 }
+
+version = currentVersion
 
 repositories {
     // Use jcenter for resolving dependencies.
@@ -21,5 +25,84 @@ dependencies {
 	//OkHttp
 	implementation 'com.squareup.okhttp3:okhttp:4.7.2'
 	// Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+	testImplementation 'junit:junit:4.12'
+}
+
+task sourcesJar(type: Jar, dependsOn: classes) {
+    classifier = 'sources'
+    from sourceSets.main.allSource
+}
+
+javadoc.failOnError = false
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar
+    archives javadocJar
+}
+
+def pomConfig = {
+    licenses {
+        license {
+            name "MIT License"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "jvogit"
+            name "Justin Vo"
+        }
+    }
+
+    scm {
+        url "https://github.com/jvogit/MyFirstGradleProject.git"
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            artifact sourcesJar {
+                classifier "sources"
+            }
+            artifact javadocJar {
+                classifier "javadoc"
+            }
+            groupId 'com.gmail.justinxvopro'
+            artifactId 'MyFirstGradleProject'
+            version currentVersion
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'MyFirstGradleProject')
+                root.appendNode('name', 'My first gradle lib')
+                root.appendNode('url', 'https://github.com/jvogit/MyFirstGradleProject.git')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
+}
+
+bintray {
+    user = bintray_user
+    key = bintray_key
+    publications = ['mavenJava']
+    pkg {
+        repo = 'testRepo'
+        name = 'MyFirstGradleProject'
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/jvogit/MyFirstGradleProject.git'
+        version {
+            desc = 'Test deployment'
+            released = new Date()
+        }
+    }
 }
