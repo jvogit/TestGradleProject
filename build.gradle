@@ -15,7 +15,7 @@ plugins {
 
 group = 'com.gmail.justinxvopro'
 archivesBaseName = 'MyFirstGradleProject'
-version = versioning.info.display
+version = "${versioning.info.display}${project.hasProperty('release') ? '' : ('-' + versioning.info.build)}"
 
 repositories {
     // Use jcenter for resolving dependencies.
