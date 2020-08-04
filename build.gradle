@@ -69,7 +69,7 @@ bintray {
         vcsUrl = 'https://github.com/jvogit/MyFirstGradleProject.git'
         publish = true
         version {
-            desc = 'First release'
+            desc = "Release ${project.version}"
             released = new Date()
             gpg {
                 sign = true
