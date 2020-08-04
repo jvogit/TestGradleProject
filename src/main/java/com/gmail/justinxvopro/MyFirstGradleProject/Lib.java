@@ -55,4 +55,8 @@ public class Lib {
 		
 		return false;
 	}
+	
+	public boolean isFalse() {
+		return false;
+	}
 }
