@@ -60,4 +60,8 @@ public class Lib {
 		return true;
 	}
 	
+	public boolean isFalse() {
+		return false;
+	}
+
 }
